@@ -33,6 +33,7 @@ dependencies:
   flutter_bloc: ^4.0.0
   fluttericon: ^1.0.7
   auto_route: ^0.2.1
+  cloud_firestore: ^0.13.7
 dev_dependencies:
   flutter_test:
     sdk: flutter

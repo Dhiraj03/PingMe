@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:fluttericon/typicons_icons.dart';
 import 'package:ping_me/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:ping_me/features/auth/presentation/bloc/auth_bloc/auth_events.dart';
 import 'package:ping_me/features/auth/presentation/bloc/register_bloc/register_bloc.dart';
 import 'package:ping_me/features/auth/presentation/widgets/Register_button.dart';
-
 
 //read login_form.dart for documentation
 class RegisterForm extends StatefulWidget {
@@ -14,11 +15,13 @@ class RegisterForm extends StatefulWidget {
 class _RegisterFormState extends State<RegisterForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  final TextEditingController _usernameController = TextEditingController();
   RegisterBloc _registerBloc;
 
   bool get isPopulated =>
-      _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
+      _emailController.text.isNotEmpty &&
+      _passwordController.text.isNotEmpty &&
+      _usernameController.text.isNotEmpty;
 
   /* Checks whether the form is valid and populated and is not in the submission phase - only then 
      enables the Register Button
@@ -33,6 +36,7 @@ class _RegisterFormState extends State<RegisterForm> {
     _registerBloc = BlocProvider.of<RegisterBloc>(context);
     _emailController.addListener(_onEmailChanged);
     _passwordController.addListener(_onPasswordChanged);
+    _usernameController.addListener(_onUsernameChanged);
   }
 
   @override
@@ -84,10 +88,25 @@ class _RegisterFormState extends State<RegisterForm> {
             child: Form(
               child: ListView(
                 children: <Widget>[
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Icon(
+                    Typicons.chat_alt,
+                    size: 70,
+                    color: Colors.purple,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: Container(height: 100),
+                  ),
                   TextFormField(
                     controller: _emailController,
                     decoration: InputDecoration(
-                      icon: Icon(Icons.email),
+                      icon: Icon(
+                        Icons.email,
+                        color: Colors.purple,
+                      ),
                       labelText: 'Email',
                     ),
                     autocorrect: false,
@@ -99,7 +118,10 @@ class _RegisterFormState extends State<RegisterForm> {
                   TextFormField(
                     controller: _passwordController,
                     decoration: InputDecoration(
-                      icon: Icon(Icons.lock),
+                      icon: Icon(
+                        Icons.lock,
+                        color: Colors.purple,
+                      ),
                       labelText: 'Password',
                     ),
                     obscureText: true,
@@ -108,6 +130,24 @@ class _RegisterFormState extends State<RegisterForm> {
                     validator: (_) {
                       return !state.isPasswordValid ? 'Invalid Password' : null;
                     },
+                  ),
+                  TextFormField(
+                    controller: _usernameController,
+                    decoration: InputDecoration(
+                      icon: Icon(
+                        FontAwesome.user,
+                        color: Colors.purple,
+                      ),
+                      labelText: 'Username',
+                    ),
+                    autocorrect: false,
+                    autovalidate: true,
+                    validator: (_) {
+                      return !state.isUsernameValid ? 'Invalid Username' : null;
+                    },
+                  ),
+                  SizedBox(
+                    height: 20,
                   ),
                   RegisterButton(
                     onPressed: isRegisterButtonEnabled(state)
@@ -127,6 +167,7 @@ class _RegisterFormState extends State<RegisterForm> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _usernameController.dispose();
     super.dispose();
   }
 
@@ -142,11 +183,16 @@ class _RegisterFormState extends State<RegisterForm> {
     );
   }
 
+  void _onUsernameChanged() {
+    _registerBloc.add(UsernameChanged(username: _usernameController.text));
+  }
+
   void _onFormSubmitted() {
     _registerBloc.add(
       Submitted(
         email: _emailController.text,
         password: _passwordController.text,
+        username: _usernameController.text
       ),
     );
   }

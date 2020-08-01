@@ -50,6 +50,6 @@ class UserRepository {
 
   // use this to get the UID instead
   Future<String> getUser() async {
-    return (await _firebaseAuth.currentUser()).email;
+    return (await _firebaseAuth.currentUser()).uid;
   }
 }

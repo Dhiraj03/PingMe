@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:fluttericon/typicons_icons.dart';
 import 'package:ping_me/features/auth/data/user_repository.dart';
 import 'package:ping_me/features/auth/presentation/bloc/auth_bloc/auth_barrel_bloc.dart';
 import 'package:ping_me/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
@@ -93,15 +95,24 @@ class _LoginFormState extends State<LoginForm> {
               padding: EdgeInsets.all(20),
               child: Form(
                   child: ListView(
+                    shrinkWrap: true,
                 children: <Widget>[
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Icon(
+                    Typicons.chat_alt,
+                    size: 70,
+                    color: Colors.purple,
+                  ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 20),
-                    child: Container(height: 200),
+                    child: Container(height: 100),
                   ),
                   TextFormField(
                     controller: _emailController,
                     decoration: InputDecoration(
-                        icon: Icon(Icons.email), labelText: 'Email'),
+                        icon: Icon(Icons.email, color: Colors.purple,), labelText: 'Email'),
                     autovalidate: true,
                     autocorrect: false,
                     validator: (_) {
@@ -111,7 +122,7 @@ class _LoginFormState extends State<LoginForm> {
                   TextFormField(
                     controller: _passwordController,
                     decoration: InputDecoration(
-                        icon: Icon(Icons.lock), labelText: 'Password'),
+                        icon: Icon(Icons.lock, color: Colors.purple,), labelText: 'Password'),
                     obscureText: true,
                     autovalidate: true,
                     autocorrect: false,

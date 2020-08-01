@@ -23,11 +23,21 @@ class PasswordChanged extends RegisterEvent {
   List get props => <dynamic>[password];
 }
 
+class UsernameChanged extends RegisterEvent {
+  final String username;
+  UsernameChanged({@required this.username});
+  @override
+  String toString() => 'Username Changed : {username : $username}';
+  @override
+  List get props => <dynamic>[username];
+}
+
 class Submitted extends RegisterEvent {
   final String email;
   final String password;
-
-  Submitted({@required this.email, @required this.password})
+  final String username;
+  Submitted(
+      {@required this.email, @required this.password, @required this.username})
       : super();
 
   @override
@@ -36,6 +46,5 @@ class Submitted extends RegisterEvent {
   }
 
   @override
-  List get props => <dynamic>[email, password];
+  List get props => <dynamic>[email, password, username];
 }
-

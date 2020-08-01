@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:ping_me/features/auth/data/user_repository.dart';
 import 'package:ping_me/features/auth/presentation/bloc/login_bloc/login_bloc.dart';
 import 'package:ping_me/features/auth/presentation/screens/Login_Form.dart';
@@ -32,10 +33,11 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
       body: BlocProvider<LoginBloc>(
         create: (_) => _loginBloc,
-        child: LoginForm(userRepository: _userRepository),
+        child: 
+            LoginForm(userRepository: _userRepository)
+          
       ),
     );
   }

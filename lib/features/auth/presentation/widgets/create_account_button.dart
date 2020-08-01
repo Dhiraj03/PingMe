@@ -15,6 +15,9 @@ class CreateAccountButton extends StatelessWidget {
     return FlatButton(
       child: Text(
         'Create an Account',
+        style: TextStyle(
+          color: Colors.purple
+        ),
       ),
       onPressed: () {
         Navigator.of(context).push<dynamic>(

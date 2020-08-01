@@ -19,10 +19,7 @@ class HomeScreen extends StatelessWidget {
           )
         ],
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[Center(child: Text('Welcome $name'))],
-      ),
+      body: Container()
     );
   }
 }
