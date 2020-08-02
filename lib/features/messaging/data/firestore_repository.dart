@@ -67,9 +67,13 @@ class FirestoreRepository {
         username: doc['username'], email: doc['email'], uid: doc['uid']);
   }
 
-  Stream<QuerySnapshot> fetchMessages(CollectionReference chatroomRef)  {
+  Stream<QuerySnapshot> fetchMessages(CollectionReference chatroomRef) {
     print(chatroomRef.id);
     return chatroomRef.snapshots();
+  }
+
+  Future<QuerySnapshot> getInitialData(CollectionReference chatroomref) async{
+    return await chatroomref.getDocuments();
   }
 
   Future<void> sendMessage(

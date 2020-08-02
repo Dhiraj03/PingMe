@@ -11,7 +11,8 @@ class MessageInitial extends MessageState {
 
 class FullChatHistory extends MessageState {
   final Stream<QuerySnapshot> chats;
-  FullChatHistory({@required this.chats});
+  final QuerySnapshot initialChat;
+  FullChatHistory({@required this.chats, @required this.initialChat});
   @override
   List get props => [chats];
 }

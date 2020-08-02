@@ -1,6 +1,8 @@
+import 'package:bubble/bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ping_me/features/auth/data/user_repository.dart';
 import 'package:ping_me/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:ping_me/features/auth/presentation/bloc/auth_bloc/auth_events.dart';
 import 'package:ping_me/features/messaging/data/firestore_repository.dart';
@@ -12,8 +14,9 @@ import 'package:ping_me/features/messaging/presentation/message_bloc/message_blo
 
 class DirectMessageScreen extends StatefulWidget {
   final User user;
+  final String self;
   final CollectionReference chatRoomRef;
-  DirectMessageScreen({this.user, this.chatRoomRef});
+  DirectMessageScreen({this.user, this.chatRoomRef, this.self});
 
   @override
   _DirectMessageScreenState createState() => _DirectMessageScreenState();
@@ -22,11 +25,12 @@ class DirectMessageScreen extends StatefulWidget {
 class _DirectMessageScreenState extends State<DirectMessageScreen> {
   User get user => widget.user;
   CollectionReference get chatroomRef => widget.chatRoomRef;
+  String get self => widget.self;
+  final TextEditingController messageController = TextEditingController();
   final FirestoreRepository firestoreRepository = FirestoreRepository();
   final MessageBloc messageBloc = MessageBloc();
   _buildMessage(Message message, bool isMe) {
-    print('inside build_message');
-    final Container msg = Container(
+    final msg = Container(
       margin: isMe
           ? EdgeInsets.only(
               top: 8.0,
@@ -40,7 +44,7 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
       padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 15.0),
       width: MediaQuery.of(context).size.width * 0.75,
       decoration: BoxDecoration(
-        color: isMe ? Colors.purple : Color(0xFFFFEFEE),
+        color: isMe ? Colors.white : Color(0xFFFFEFEE),
         borderRadius: isMe
             ? BorderRadius.only(
                 topLeft: Radius.circular(15.0),
@@ -51,27 +55,34 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                 bottomRight: Radius.circular(15.0),
               ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            message.timestamp.toDate().toString(),
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16.0,
-              fontWeight: FontWeight.w600,
+      child: Bubble(
+        nip: BubbleNip.rightBottom,
+        nipHeight: 10,
+        nipRadius: 1,
+        nipWidth: 3,
+        color: Colors.purple,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              message.timestamp.toDate().toString(),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16.0,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          SizedBox(height: 8.0),
-          Text(
-            message.message,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16.0,
-              fontWeight: FontWeight.w600,
+            SizedBox(height: 8.0),
+            Text(
+              message.message,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16.0,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
     if (isMe) {
@@ -107,7 +118,7 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
           Expanded(
             child: TextField(
               textCapitalization: TextCapitalization.sentences,
-              onChanged: (value) {},
+              controller: messageController,
               decoration: InputDecoration.collapsed(
                 hintText: 'Send a message...',
               ),
@@ -117,7 +128,17 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
             icon: Icon(Icons.send),
             iconSize: 25.0,
             color: Theme.of(context).primaryColor,
-            onPressed: () {},
+            onPressed: () {
+              messageBloc.add(SendMessage(
+                  chatroomRef: chatroomRef,
+                  message: Message(
+                      message: messageController.text,
+                      sender: self,
+                      receiver: user.uid,
+                      timestamp: Timestamp.fromMillisecondsSinceEpoch(
+                          DateTime.now().millisecondsSinceEpoch),
+                      type: 1)));
+            },
           ),
         ],
       ),
@@ -179,10 +200,11 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                           );
                         else if (state is FullChatHistory) {
                           return StreamBuilder(
+                              initialData: state.initialChat,
                               stream: state.chats,
                               builder:
                                   (BuildContext context, AsyncSnapshot snap) {
-                                 List<Message> chatList = [];
+                                List<Message> chatList = [];
                                 snap.data.documents.forEach((message) {
                                   chatList.add(Message.fromJson({
                                     'message': message['message'],

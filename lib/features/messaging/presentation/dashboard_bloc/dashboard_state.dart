@@ -7,7 +7,8 @@ abstract class DashboardState extends Equatable {
 class DirectMessages extends DashboardState {
   final CollectionReference chatRoomRef;
   final User user2;
-  DirectMessages({this.chatRoomRef, this.user2});
+  final String self;
+  DirectMessages({this.chatRoomRef, this.user2, this.self});
   @override
   List get props => <dynamic>[chatRoomRef];
 }

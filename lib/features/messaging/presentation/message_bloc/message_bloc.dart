@@ -20,11 +20,13 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
     if (event is FetchMessages) {
       print('lmao');
       final chats = await firestoreRepository.fetchMessages(event.chatroomRef);
-      yield FullChatHistory(chats: chats);
+      final initialData = await firestoreRepository.getInitialData(event.chatroomRef);
+      yield FullChatHistory(chats: chats, initialChat: initialData);
     } else if (event is SendMessage) {
       await firestoreRepository.sendMessage(event.chatroomRef, event.message);
       final chats = await firestoreRepository.fetchMessages(event.chatroomRef);
-      yield FullChatHistory(chats: chats);
+      final initialData = await firestoreRepository.getInitialData(event.chatroomRef);
+      yield FullChatHistory(chats: chats, initialChat: initialData);
     }
   }
 }

@@ -27,7 +27,7 @@ class DashboardScreen extends StatelessWidget {
                     print(state.searchList[0].username);
                   return SearchScreen(searchList: state.searchList);
                 } else if (state is DirectMessages)
-                  return DirectMessageScreen(user : state.user2, chatRoomRef: state.chatRoomRef,);
+                  return DirectMessageScreen(user : state.user2, chatRoomRef: state.chatRoomRef,self:state.self);
               })),
         ));
   }

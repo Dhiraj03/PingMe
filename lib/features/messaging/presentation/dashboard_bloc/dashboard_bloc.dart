@@ -16,7 +16,6 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   final UserRepository userRepository = UserRepository();
 
   DashboardState get initialState => ClassicDashboard();
-
   @override
   Stream<DashboardState> mapEventToState(
     DashboardEvent event,
@@ -29,7 +28,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       final user2 = await firestoreRepository.fetchUser(uid2);
       final chatRoomRef =
           await firestoreRepository.getChatroomReference(uid1, uid2);
-      yield DirectMessages(chatRoomRef: chatRoomRef, user2: user2);
+      yield DirectMessages(chatRoomRef: chatRoomRef, user2: user2, self: uid1);
     } else if (event is Searching) {
       print('here');
       final List<User> searchlist =
