@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ping_me/features/messaging/presentation/dashboard_screen.dart';
 import 'package:ping_me/home_screen.dart';
 import 'package:ping_me/features/auth/presentation/bloc/auth_bloc/auth_barrel_bloc.dart';
 import 'package:ping_me/features/auth/presentation/screens/login_screen.dart';
 import 'package:ping_me/features/auth/presentation/screens/splash_screen.dart';
 import 'package:ping_me/features/auth/data/user_repository.dart';
+import 'package:ping_me/routes/router.gr.dart';
 
 void main() {
   runApp(HomePage());
@@ -34,11 +36,17 @@ class _HomePageState extends State<HomePage> {
     return BlocProvider(
       create: (BuildContext context) => _authBloc,
       child: MaterialApp(
+        theme: ThemeData(
+          primaryColor: Colors.purple
+        ),
+        navigatorKey: Router.navigatorKey,
+        onGenerateRoute: Router.onGenerateRoute,
+        debugShowCheckedModeBanner: false,
         home: BlocBuilder<AuthBloc, AuthState>(
             builder: (BuildContext context, AuthState state) {
           if (state is AppStarted) return SplashScreen();
           if (state is Authenticated)
-            return HomeScreen();
+            return DashboardScreen();
           if (state is Unauthenticated)
             return LoginScreen(userRepository: _userRepository);
           return Container();

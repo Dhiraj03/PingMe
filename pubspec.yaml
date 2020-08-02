@@ -34,6 +34,7 @@ dependencies:
   fluttericon: ^1.0.7
   auto_route: ^0.2.1
   cloud_firestore: ^0.13.7
+  bubble: ^1.1.9+1
 dev_dependencies:
   flutter_test:
     sdk: flutter

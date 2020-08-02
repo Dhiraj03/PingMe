@@ -4,21 +4,22 @@ abstract class DashboardState extends Equatable {
   const DashboardState();
 }
 
-class DashboardInitial extends DashboardState {
+class DirectMessages extends DashboardState {
+  final CollectionReference chatRoomRef;
+  final User user2;
+  DirectMessages({this.chatRoomRef, this.user2});
   @override
-  List<Object> get props => [];
+  List get props => <dynamic>[chatRoomRef];
 }
 
-class DirectMessages extends DashboardState {
-  final String uid2;
-  DirectMessages({this.uid2});
+class ClassicDashboard extends DashboardState {
   @override
-  List get props => <dynamic>[uid2];
+  List get props => [];
 }
 
 class Search extends DashboardState {
+  List<User> searchList;
+  Search({@required this.searchList});
   @override
-  // TODO: implement props
-  List<Object> get props => throw UnimplementedError();
-  
+  List<Object> get props => [searchList];
 }
