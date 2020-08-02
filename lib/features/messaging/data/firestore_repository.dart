@@ -29,17 +29,17 @@ class FirestoreRepository {
         .where('uid2', isEqualTo: uid2)
         .getDocuments();
     if (snapshot1.documents.length == 1) {
-      return await chats
-          .document(snapshot1.documents[0].documentID)
-          .collection('chat_history');
+      final docId = snapshot1.documents[0].documentID;
+      return chats.document(docId).collection('chat_history');
     }
     final QuerySnapshot snapshot2 = await chats
         .where('uid1', isEqualTo: uid2)
         .where('uid2', isEqualTo: uid1)
         .getDocuments();
     if (snapshot2.documents.length == 1) {
-      return await chats
-          .document(snapshot1.documents[0].documentID)
+      final docId = snapshot2.documents[0].documentID;
+      return chats
+          .document(docId)
           .collection('chat_history');
     }
 
@@ -72,7 +72,7 @@ class FirestoreRepository {
     return chatroomRef.snapshots();
   }
 
-  Future<QuerySnapshot> getInitialData(CollectionReference chatroomref) async{
+  Future<QuerySnapshot> getInitialData(CollectionReference chatroomref) async {
     return await chatroomref.getDocuments();
   }
 
