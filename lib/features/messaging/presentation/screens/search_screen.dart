@@ -35,6 +35,12 @@ class _SearchScreenState extends State<SearchScreen> {
           Padding(
             padding: const EdgeInsets.all(15.0),
             child: TextField(
+              autofocus: true,
+              cursorColor: Colors.purple,
+              cursorRadius: Radius.circular(10),
+              style: TextStyle(
+                fontSize: 20,
+              ),
               decoration: InputDecoration(
                 hintText: 'Search for a user',
                 disabledBorder: OutlineInputBorder(

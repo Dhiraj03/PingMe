@@ -11,7 +11,7 @@ import 'package:ping_me/features/messaging/data/user_model.dart';
 import 'package:ping_me/features/messaging/presentation/dashboard_bloc/dashboard_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:ping_me/features/messaging/presentation/message_bloc/message_bloc.dart';
-
+import 'package:ping_me/features/messaging/presentation/services/date_formatting.dart';
 class DirectMessageScreen extends StatefulWidget {
   final User user;
   final String self;
@@ -30,42 +30,32 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
   final FirestoreRepository firestoreRepository = FirestoreRepository();
   final MessageBloc messageBloc = MessageBloc();
   _buildMessage(Message message, bool isMe) {
+    final BubbleNip nipDirection =
+        isMe ? BubbleNip.rightBottom : BubbleNip.leftBottom;
+    final Color messageColor = isMe ? Colors.purple[600] : Colors.purple[200];
     final msg = Container(
       margin: isMe
           ? EdgeInsets.only(
-              top: 8.0,
               bottom: 8.0,
               left: 80.0,
             )
           : EdgeInsets.only(
-              top: 8.0,
+              right: 30.0,
               bottom: 8.0,
             ),
-      padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 15.0),
+      padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 2.0),
       width: MediaQuery.of(context).size.width * 0.75,
-      decoration: BoxDecoration(
-        color: isMe ? Colors.white : Color(0xFFFFEFEE),
-        borderRadius: isMe
-            ? BorderRadius.only(
-                topLeft: Radius.circular(15.0),
-                bottomLeft: Radius.circular(15.0),
-              )
-            : BorderRadius.only(
-                topRight: Radius.circular(15.0),
-                bottomRight: Radius.circular(15.0),
-              ),
-      ),
       child: Bubble(
-        nip: BubbleNip.rightBottom,
+        nip: nipDirection,
         nipHeight: 10,
         nipRadius: 1,
         nipWidth: 3,
-        color: Colors.purple,
+        color: messageColor,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              message.timestamp.toDate().toString(),
+              formatDate(message.timestamp.toDate()),
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16.0,
@@ -92,12 +82,12 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
     return Row(
       children: <Widget>[
         msg,
-        IconButton(
-          icon: isMe ? Icon(Icons.favorite) : Icon(Icons.favorite_border),
-          iconSize: 30.0,
-          color: isMe ? Theme.of(context).primaryColor : Colors.blueGrey,
-          onPressed: () {},
-        )
+        // IconButton(
+        //   icon: isMe ? Icon(Icons.favorite) : Icon(Icons.favorite_border),
+        //   iconSize: 30.0,
+        //   color: isMe ? Theme.of(context).primaryColor : Colors.blueGrey,
+        //   onPressed: () {},
+        // )
       ],
     );
   }
@@ -138,6 +128,7 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                       timestamp: Timestamp.fromMillisecondsSinceEpoch(
                           DateTime.now().millisecondsSinceEpoch),
                       type: 1)));
+              messageController.clear();
             },
           ),
         ],
@@ -223,7 +214,7 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     final bool isMe =
-                                        !(chatList[index].sender == user);
+                                        !(chatList[index].sender == user.uid);
                                     return _buildMessage(chatList[index], isMe);
                                   },
                                 );

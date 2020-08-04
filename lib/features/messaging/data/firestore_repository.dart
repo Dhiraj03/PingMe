@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ping_me/features/auth/data/user_repository.dart';
 import 'package:ping_me/features/messaging/data/message_model.dart';
@@ -38,9 +39,7 @@ class FirestoreRepository {
         .getDocuments();
     if (snapshot2.documents.length == 1) {
       final docId = snapshot2.documents[0].documentID;
-      return chats
-          .document(docId)
-          .collection('chat_history');
+      return chats.document(docId).collection('chat_history');
     }
 
     final res = await chats.add({'uid1': uid1, 'uid2': uid2});
@@ -86,5 +85,30 @@ class FirestoreRepository {
       'type': message.type,
       'photourl': message.photoUrl
     });
+    QuerySnapshot chat1 = await firestoreInstance
+        .collection('chats')
+        .where('uid1', isEqualTo: message.sender)
+        .where('uid2', isEqualTo: message.receiver)
+        .getDocuments();
+    QuerySnapshot chat2 = await firestoreInstance
+        .collection('chats')
+        .where('uid1', isEqualTo: message.receiver)
+        .where('uid2',isEqualTo: message.sender)
+        .getDocuments();
+    if (chat1.documents.length == 1) {
+      final docId = chat1.documents[0].documentID;
+      print(docId);
+      firestoreInstance.collection('chats').document(docId).setData(
+          {'last_timestamp': Timestamp.fromDate(DateTime.now())},
+          merge: true);
+    } else {
+      if (chat2.documents.length == 1) {
+        final docId = chat2.documents[0].documentID;
+        print(docId);
+        firestoreInstance.collection('chats').document(docId).setData(
+            {'last_timestamp': Timestamp.fromDate(DateTime.now())},
+            merge: true);
+      }
+    }
   }
 }
