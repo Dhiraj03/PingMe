@@ -1,4 +1,5 @@
 # PingMe
-This is a chat application written in Flutter, with Firebase Auth for authentication of users and Cloud Firestore as the database.
-
-.
+This is a chat application written in Flutter. <br/>
+# Authentication <br/>
+Firebase Auth<br/>
+# 
