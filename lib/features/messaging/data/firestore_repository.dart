@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ping_me/features/auth/data/user_repository.dart';
 import 'package:ping_me/features/messaging/data/message_model.dart';
@@ -41,8 +40,15 @@ class FirestoreRepository {
       final docId = snapshot2.documents[0].documentID;
       return chats.document(docId).collection('chat_history');
     }
-
-    final res = await chats.add({'uid1': uid1, 'uid2': uid2});
+    final user1 = await fetchUser(uid1);
+    final user2 = await fetchUser(uid2);
+    final res = await chats.add({
+      'uid1': uid1,
+      'uid2': uid2,
+      'participants': [uid1, uid2],
+      'username1' : user1.username,
+      'username2' : user2.username
+    });
     return res.collection('chat_history');
   }
 
@@ -75,6 +81,20 @@ class FirestoreRepository {
     return await chatroomref.getDocuments();
   }
 
+  Stream<QuerySnapshot> fetchRecentChats(String uid) {
+    return firestoreInstance
+        .collection('chats')
+        .where('participants', arrayContains: uid)
+        .snapshots();
+  }
+
+  Future<QuerySnapshot> getInitialChats(String uid) async {
+    return await firestoreInstance
+        .collection('chats')
+        .where('participants', arrayContains: uid)
+        .getDocuments();
+  }
+
   Future<void> sendMessage(
       CollectionReference chatroomref, Message message) async {
     chatroomref.add({
@@ -83,7 +103,7 @@ class FirestoreRepository {
       'receiver': message.receiver,
       'timestamp': DateTime.now(),
       'type': message.type,
-      'photourl': message.photoUrl
+      'photourl': message.photoUrl,
     });
     QuerySnapshot chat1 = await firestoreInstance
         .collection('chats')
@@ -93,21 +113,32 @@ class FirestoreRepository {
     QuerySnapshot chat2 = await firestoreInstance
         .collection('chats')
         .where('uid1', isEqualTo: message.receiver)
-        .where('uid2',isEqualTo: message.sender)
+        .where('uid2', isEqualTo: message.sender)
         .getDocuments();
+
     if (chat1.documents.length == 1) {
       final docId = chat1.documents[0].documentID;
       print(docId);
-      firestoreInstance.collection('chats').document(docId).setData(
-          {'last_timestamp': Timestamp.fromDate(DateTime.now())},
-          merge: true);
+      // final user1 = await fetchUser(message.sender);
+      // final user2 = await fetchUser(message.receiver);
+      firestoreInstance.collection('chats').document(docId).setData({
+        'last_timestamp': Timestamp.fromDate(DateTime.now()),
+        'last_message': message.message,
+        // 'username1' : user1.username,
+        // 'username2' : user2.username
+      }, merge: true);
     } else {
       if (chat2.documents.length == 1) {
         final docId = chat2.documents[0].documentID;
         print(docId);
-        firestoreInstance.collection('chats').document(docId).setData(
-            {'last_timestamp': Timestamp.fromDate(DateTime.now())},
-            merge: true);
+        // final user2 = await fetchUser(message.sender);
+        // final user1 = await fetchUser(message.receiver);
+        firestoreInstance.collection('chats').document(docId).setData({
+          'last_timestamp': Timestamp.fromDate(DateTime.now()),
+          'last_message': message.message,
+          // 'username1' : user1.username,
+          // 'username2' : user2.username
+        }, merge: true);
       }
     }
   }

@@ -4,6 +4,13 @@ abstract class DashboardEvent extends Equatable {
   const DashboardEvent();
 }
 
+class GetInitialChats extends DashboardEvent {
+  @override
+  // TODO: implement props
+  List<Object> get props => throw UnimplementedError();
+  
+}
+
 class Searching extends DashboardEvent {
   final String searchTerm;
   Searching({@required this.searchTerm});
@@ -19,6 +26,8 @@ class OpenDM extends DashboardEvent {
 }
 
 class GotoDashboard extends DashboardEvent {
+  final String uid;
+  GotoDashboard({@required this.uid});
   @override
   List get props => [];
 }

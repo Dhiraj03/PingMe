@@ -2,6 +2,7 @@ import 'package:bubble/bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ping_me/features/auth/data/user_repository.dart';
 import 'package:ping_me/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:ping_me/features/auth/presentation/bloc/auth_bloc/auth_events.dart';
@@ -12,6 +13,7 @@ import 'package:ping_me/features/messaging/presentation/dashboard_bloc/dashboard
 import 'package:flutter/material.dart';
 import 'package:ping_me/features/messaging/presentation/message_bloc/message_bloc.dart';
 import 'package:ping_me/features/messaging/presentation/services/date_formatting.dart';
+
 class DirectMessageScreen extends StatefulWidget {
   final User user;
   final String self;
@@ -136,96 +138,131 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
     );
   }
 
+  Future<bool> willPopCallBack(BuildContext mainContext) async {
+    return (await showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Are you sure?'),
+            content: new Text('Do you want to exit to the dashboard?'),
+            actions: <Widget>[
+              new FlatButton(
+                onPressed: () => Navigator.of(mainContext).pop(false),
+                child: new Text(
+                  'No',
+                  style: TextStyle(color: Colors.purple),
+                ),
+              ),
+              new FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  BlocProvider.of<DashboardBloc>(mainContext)
+                      .add(GotoDashboard());
+                },
+                child: new Text(
+                  'Yes',
+                  style: TextStyle(color: Colors.purple),
+                ),
+              ),
+            ],
+          ),
+        )) ??
+        false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
-      appBar: AppBar(
-        elevation: 0,
-        title: Text(user.username),
-        backgroundColor: Colors.purple,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            BlocProvider.of<DashboardBloc>(context).add(GotoDashboard());
-          },
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.exit_to_app,
-              color: Colors.white,
-            ),
+    return WillPopScope(
+      onWillPop: () => willPopCallBack(context),
+      child: Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
+        appBar: AppBar(
+          elevation: 0,
+          title: Text(user.username),
+          backgroundColor: Colors.purple,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
             onPressed: () {
-              BlocProvider.of<AuthBloc>(context).add(LoggedOut());
+              BlocProvider.of<DashboardBloc>(context).add(GotoDashboard());
             },
           ),
-        ],
-      ),
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30.0),
-                    topRight: Radius.circular(30.0),
-                  ),
-                ),
-                child: ClipRRect(
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.exit_to_app,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                BlocProvider.of<AuthBloc>(context).add(LoggedOut());
+              },
+            ),
+          ],
+        ),
+        body: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(30.0),
                       topRight: Radius.circular(30.0),
                     ),
-                    child: BlocProvider<MessageBloc>(
-                      create: (BuildContext context) =>
-                          messageBloc..add(FetchMessages(chatroomRef)),
-                      child: BlocBuilder<MessageBloc, MessageState>(
-                          builder: (BuildContext context, MessageState state) {
-                        if (state is MessageInitial)
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        else if (state is FullChatHistory) {
-                          return StreamBuilder(
-                              initialData: state.initialChat,
-                              stream: state.chats,
-                              builder:
-                                  (BuildContext context, AsyncSnapshot snap) {
-                                List<Message> chatList = [];
-                                snap.data.documents.forEach((message) {
-                                  chatList.add(Message.fromJson({
-                                    'message': message['message'],
-                                    'receiver': message['receiver'],
-                                    'sender': message['sender'],
-                                    'timestamp': message['timestamp'],
-                                    'type': message['type']
-                                  }));
+                  ),
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30.0),
+                        topRight: Radius.circular(30.0),
+                      ),
+                      child: BlocProvider<MessageBloc>(
+                        create: (BuildContext context) =>
+                            messageBloc..add(FetchMessages(chatroomRef)),
+                        child: BlocBuilder<MessageBloc, MessageState>(builder:
+                            (BuildContext context, MessageState state) {
+                          if (state is MessageInitial)
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          else if (state is FullChatHistory) {
+                            return StreamBuilder(
+                                initialData: state.initialChat,
+                                stream: state.chats,
+                                builder:
+                                    (BuildContext context, AsyncSnapshot snap) {
+                                  List<Message> chatList = [];
+                                  snap.data.documents.forEach((message) {
+                                    chatList.add(Message.fromJson({
+                                      'message': message['message'],
+                                      'receiver': message['receiver'],
+                                      'sender': message['sender'],
+                                      'timestamp': message['timestamp'],
+                                      'type': message['type']
+                                    }));
+                                  });
+                                  chatList.sort((m1, m2) =>
+                                      m1.timestamp.compareTo(m2.timestamp));
+                                  chatList = List.from(chatList.reversed);
+                                  return ListView.builder(
+                                    reverse: true,
+                                    itemCount: chatList.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      final bool isMe =
+                                          !(chatList[index].sender == user.uid);
+                                      return _buildMessage(
+                                          chatList[index], isMe);
+                                    },
+                                  );
                                 });
-                                chatList.sort((m1, m2) =>
-                                    m1.timestamp.compareTo(m2.timestamp));
-                                chatList = List.from(chatList.reversed);
-                                return ListView.builder(
-                                  reverse: true,
-                                  itemCount: chatList.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    final bool isMe =
-                                        !(chatList[index].sender == user.uid);
-                                    return _buildMessage(chatList[index], isMe);
-                                  },
-                                );
-                              });
-                        }
-                      }),
-                    )),
+                          }
+                        }),
+                      )),
+                ),
               ),
-            ),
-            _buildMessageComposer(),
-          ],
+              _buildMessageComposer(),
+            ],
+          ),
         ),
       ),
     );

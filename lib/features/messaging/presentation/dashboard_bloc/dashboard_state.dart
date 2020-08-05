@@ -4,6 +4,11 @@ abstract class DashboardState extends Equatable {
   const DashboardState();
 }
 
+class DashboardInitial extends DashboardState {
+  @override
+  List get props => [];
+}
+
 class DirectMessages extends DashboardState {
   final CollectionReference chatRoomRef;
   final User user2;
@@ -14,6 +19,10 @@ class DirectMessages extends DashboardState {
 }
 
 class ClassicDashboard extends DashboardState {
+  final Stream<QuerySnapshot> recentChats;
+  final QuerySnapshot initialData;
+  final String self;
+  ClassicDashboard({@required this.recentChats, @required this.initialData, @required this.self});
   @override
   List get props => [];
 }
