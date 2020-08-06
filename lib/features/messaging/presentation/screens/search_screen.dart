@@ -24,6 +24,7 @@ class _SearchScreenState extends State<SearchScreen> {
     return (await showDialog(
           context: context,
           builder: (context) => new AlertDialog(
+            backgroundColor: Color.fromRGBO(255, 255, 255, 0.15),
             title: new Text('Are you sure?'),
             content: new Text('Do you want to exit to the dashboard?'),
             actions: <Widget>[
@@ -31,7 +32,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 onPressed: () => Navigator.of(mainContext).pop(false),
                 child: new Text(
                   'No',
-                  style: TextStyle(color: Colors.purple),
+                  style: TextStyle(color: Colors.teal[400]),
                 ),
               ),
               new FlatButton(
@@ -42,7 +43,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 },
                 child: new Text(
                   'Yes',
-                  style: TextStyle(color: Colors.purple),
+                  style: TextStyle(color: Colors.teal[400]),
                 ),
               ),
             ],
@@ -56,9 +57,10 @@ class _SearchScreenState extends State<SearchScreen> {
     return WillPopScope(
         onWillPop: () => willPopCallBack(context),
         child: Scaffold(
+        backgroundColor: Color.fromRGBO(12, 12, 12, 1),
         floatingActionButton: FloatingActionButton(
             child: Icon(Icons.arrow_back),
-            backgroundColor: Colors.purple,
+            backgroundColor: Colors.teal[400],
             onPressed: () {
               BlocProvider.of<DashboardBloc>(context).add(GotoDashboard());
             }),
@@ -68,23 +70,26 @@ class _SearchScreenState extends State<SearchScreen> {
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: TextField(
+              
                 autofocus: true,
-                cursorColor: Colors.purple,
+                cursorColor: Colors.teal[400],
                 cursorRadius: Radius.circular(10),
                 style: TextStyle(
                   fontSize: 20,
+                  color: Colors.teal[400]
                 ),
                 decoration: InputDecoration(
+                  hintStyle: TextStyle(color :  Colors.teal[400]),
                   hintText: 'Search for a user',
                   disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(color: Colors.purple)),
+                      borderSide: BorderSide(color: Colors.teal[400])),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.purple),
+                    borderSide: BorderSide(color: Colors.teal[400]),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.purple),
+                    borderSide: BorderSide(color: Colors.teal[400]),
                     borderRadius: BorderRadius.circular(5),
                   ),
                 ),
@@ -122,19 +127,19 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Divider(
-                color: Colors.grey[300],
-                indent: 35,
-                endIndent: 35,
-                thickness: 1.0,
-              ),
-              Text('Username : ' + username),
               SizedBox(
                 height: 10,
               ),
-              Text('Email : ' + email),
+              Text('Username : ' + username, style: TextStyle(color: Colors.teal[400]),),
+              SizedBox(
+                height: 10,
+              ),
+              Text('Email : ' + email, style: TextStyle(color: Colors.teal[400]),),
+              SizedBox(
+                height: 10,
+              ),
               Divider(
-                color: Colors.grey[300],
+                color: Color.fromRGBO(255, 255, 255, 0.09),
                 indent: 35,
                 endIndent: 35,
                 thickness: 1.0,

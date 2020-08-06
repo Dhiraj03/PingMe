@@ -35,9 +35,6 @@ class _HomePageState extends State<HomePage> {
     return BlocProvider(
       create: (BuildContext context) => _authBloc,
       child: MaterialApp(
-        theme: ThemeData(
-          primaryColor: Colors.purple
-        ),
         navigatorKey: Router.navigatorKey,
         onGenerateRoute: Router.onGenerateRoute,
         debugShowCheckedModeBanner: false,

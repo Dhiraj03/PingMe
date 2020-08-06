@@ -27,12 +27,15 @@ class _ClassicDashboardScreenState extends State<ClassicDashboardScreen> {
   Widget buildRecentChatTile(String username, String lastText) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: Colors.purple,
+        backgroundColor: Colors.teal[400],
         child: Text(username[0].toUpperCase(),
             style: TextStyle(color: Colors.white)),
       ),
-      title: Text(username),
-      subtitle: Text(lastText),
+      title: Text(
+        username,
+        style: TextStyle(color: Colors.white),
+      ),
+      subtitle: Text(lastText, style: TextStyle(color: Colors.white)),
     );
   }
 
@@ -68,8 +71,9 @@ class _ClassicDashboardScreenState extends State<ClassicDashboardScreen> {
     return WillPopScope(
       onWillPop: willPopCallBack,
       child: Scaffold(
+        backgroundColor: Color.fromRGBO(12, 12, 12, 1),
         appBar: AppBar(
-          backgroundColor: Colors.purple,
+          backgroundColor: Color.fromRGBO(255, 255, 255, 0.09),
           leading: Icon(Icons.arrow_back),
           title: Text('Ping Me'),
           actions: <Widget>[
@@ -86,7 +90,7 @@ class _ClassicDashboardScreenState extends State<ClassicDashboardScreen> {
         ),
         floatingActionButton: FloatingActionButton(
             child: Icon(Icons.search),
-            backgroundColor: Colors.purple,
+            backgroundColor: Colors.teal[400],
             onPressed: () {
               BlocProvider.of<DashboardBloc>(context)
                   .add(Searching(searchTerm: ''));
@@ -124,7 +128,9 @@ class _ClassicDashboardScreenState extends State<ClassicDashboardScreen> {
                                           user.connectionState ==
                                               ConnectionState.waiting ||
                                           user.hasError)
-                                        return Container();
+                                        return Container(
+                                          color: Color.fromRGBO(12, 12, 12, 1),
+                                        );
                                       else
                                         return GestureDetector(
                                           onTap: () {

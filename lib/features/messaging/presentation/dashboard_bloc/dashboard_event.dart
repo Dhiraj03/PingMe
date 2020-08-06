@@ -8,7 +8,6 @@ class GetInitialChats extends DashboardEvent {
   @override
   // TODO: implement props
   List<Object> get props => throw UnimplementedError();
-  
 }
 
 class Searching extends DashboardEvent {
@@ -30,4 +29,11 @@ class GotoDashboard extends DashboardEvent {
   GotoDashboard({@required this.uid});
   @override
   List get props => [];
+}
+
+class GetProfile extends DashboardEvent {
+  final User user;
+  GetProfile({@required this.user});
+  @override
+  List get props => [user];
 }

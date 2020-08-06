@@ -34,7 +34,8 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
   _buildMessage(Message message, bool isMe) {
     final BubbleNip nipDirection =
         isMe ? BubbleNip.rightBottom : BubbleNip.leftBottom;
-    final Color messageColor = isMe ? Colors.purple[600] : Colors.purple[200];
+    final Color messageColor =
+        isMe ? Colors.teal[400] : Color.fromRGBO(255, 255, 255, 0.15);
     final msg = Container(
       margin: isMe
           ? EdgeInsets.only(
@@ -84,12 +85,6 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
     return Row(
       children: <Widget>[
         msg,
-        // IconButton(
-        //   icon: isMe ? Icon(Icons.favorite) : Icon(Icons.favorite_border),
-        //   iconSize: 30.0,
-        //   color: isMe ? Theme.of(context).primaryColor : Colors.blueGrey,
-        //   onPressed: () {},
-        // )
       ],
     );
   }
@@ -97,14 +92,14 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
   _buildMessageComposer() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.0),
-      height: 70.0,
-      color: Colors.white,
+      height: 55.0,
+      color: Color.fromRGBO(255, 255, 255, 0.2),
       child: Row(
         children: <Widget>[
           IconButton(
             icon: Icon(Icons.photo),
             iconSize: 25.0,
-            color: Theme.of(context).primaryColor,
+            color: Colors.teal[400],
             onPressed: () {},
           ),
           Expanded(
@@ -119,7 +114,7 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
           IconButton(
             icon: Icon(Icons.send),
             iconSize: 25.0,
-            color: Theme.of(context).primaryColor,
+            color: Colors.teal[400],
             onPressed: () {
               messageBloc.add(SendMessage(
                   chatroomRef: chatroomRef,
@@ -142,6 +137,7 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
     return (await showDialog(
           context: context,
           builder: (context) => new AlertDialog(
+            backgroundColor: Color.fromRGBO(255, 255, 255,1),
             title: new Text('Are you sure?'),
             content: new Text('Do you want to exit to the dashboard?'),
             actions: <Widget>[
@@ -149,7 +145,7 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                 onPressed: () => Navigator.of(mainContext).pop(false),
                 child: new Text(
                   'No',
-                  style: TextStyle(color: Colors.purple),
+                  style: TextStyle(color: Colors.teal[400]),
                 ),
               ),
               new FlatButton(
@@ -160,7 +156,7 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                 },
                 child: new Text(
                   'Yes',
-                  style: TextStyle(color: Colors.purple),
+                  style: TextStyle(color: Colors.teal[400]),
                 ),
               ),
             ],
@@ -174,11 +170,11 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
     return WillPopScope(
       onWillPop: () => willPopCallBack(context),
       child: Scaffold(
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Color.fromRGBO(12, 12, 12, 1),
         appBar: AppBar(
           elevation: 0,
           title: Text(user.username),
-          backgroundColor: Colors.purple,
+          backgroundColor: Color.fromRGBO(255, 255, 255, 0.09),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
@@ -203,13 +199,6 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
             children: <Widget>[
               Expanded(
                 child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30.0),
-                      topRight: Radius.circular(30.0),
-                    ),
-                  ),
                   child: ClipRRect(
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(30.0),
@@ -250,8 +239,12 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                                         (BuildContext context, int index) {
                                       final bool isMe =
                                           !(chatList[index].sender == user.uid);
-                                      return _buildMessage(
-                                          chatList[index], isMe);
+                                      if (index == 0)
+                                        return _buildMessage(
+                                            chatList[index], isMe);
+                                      else
+                                        return _buildMessage(
+                                            chatList[index], !isMe);
                                     },
                                   );
                                 });
