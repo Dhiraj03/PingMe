@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ping_me/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:ping_me/features/auth/presentation/bloc/auth_bloc/auth_events.dart';
 import 'package:ping_me/features/messaging/presentation/dashboard_bloc/dashboard_bloc.dart';
+import 'package:ping_me/features/messaging/presentation/profile_bloc/profile_bloc.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -10,6 +11,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final ProfileBloc profileBloc = ProfileBloc();
+
   Future<bool> willPopCallBack() async {
     return (await showDialog(
           context: context,
@@ -42,28 +45,70 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return WillPopScope(
         onWillPop: willPopCallBack,
         child: Scaffold(
-            backgroundColor: Color.fromRGBO(12, 12, 12, 1),
-            appBar: AppBar(
-              backgroundColor: Color.fromRGBO(255, 255, 255, 0.09),
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back),
+          backgroundColor: Color.fromRGBO(12, 12, 12, 1),
+          appBar: AppBar(
+            backgroundColor: Color.fromRGBO(255, 255, 255, 0.09),
+            centerTitle: true,
+            title: Text('Ping Me'),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Icons.exit_to_app,
+                  color: Colors.white,
+                ),
                 onPressed: () {
-                  BlocProvider.of<DashboardBloc>(context).add(GotoDashboard());
+                  BlocProvider.of<AuthBloc>(context).add(LoggedOut());
                 },
               ),
-              title: Text('Ping Me'),
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.exit_to_app,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    print('wtf');
-                    BlocProvider.of<AuthBloc>(context).add(LoggedOut());
-                  },
-                ),
-              ],
-            )));
+            ],
+          ),
+          body: BlocProvider<ProfileBloc>(
+            create: (_) => profileBloc,
+            child: BlocBuilder<ProfileBloc, ProfileState>(
+                bloc: profileBloc..add(GetInitialProfile()),
+                builder: (BuildContext context, ProfileState state) {
+                  if (state is ProfileInitial) {
+                    print(state.user.photoUrl);
+                    return ListView(
+                      shrinkWrap: true,
+                      children: <Widget>[
+                        SizedBox(
+                          height: 30,
+                        ),
+                        Center(
+                          child: Container(
+                            height: 200,
+                            width: 200,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.black,
+                                image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: NetworkImage(
+                                      state.user.photoUrl ??
+                                          'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
+                                    ))),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        Center(
+                          child: Text(
+                            state.user.username,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 28,
+                            ),
+                          ),
+                        )
+                      ],
+                    );
+                  } else {
+                    return CircularProgressIndicator();
+                  }
+                }),
+          ),
+        ));
   }
 }
