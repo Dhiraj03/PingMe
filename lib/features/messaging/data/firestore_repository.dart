@@ -10,7 +10,7 @@ class FirestoreRepository {
     print('creating a user');
     final users = firestoreInstance.collection('users');
     final uid = await userRepository.getUser();
-    users.add({'uid': uid, 'email': email, 'username': username});
+    users.add({'uid': uid, 'email': email, 'username': username, 'photoUrl' : null});
   }
 
   Future<bool> validUsername(String username) async {
@@ -69,7 +69,7 @@ class FirestoreRepository {
     final ref = await users.where('uid', isEqualTo: uid).getDocuments();
     final doc = ref.documents[0];
     return User(
-        username: doc['username'], email: doc['email'], uid: doc['uid']);
+        username: doc['username'], email: doc['email'], uid: doc['uid'], photoUrl: doc['photoUrl']);
   }
 
   Stream<QuerySnapshot> fetchMessages(CollectionReference chatroomRef) {

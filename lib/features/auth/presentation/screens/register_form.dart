@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:fluttericon/typicons_icons.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ping_me/features/auth/data/user_repository.dart';
 import 'package:ping_me/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:ping_me/features/auth/presentation/bloc/auth_bloc/auth_events.dart';
@@ -100,9 +101,22 @@ class _RegisterFormState extends State<RegisterForm> {
                     size: 70,
                     color: Colors.teal[400],
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20),
-                    child: Container(height: 100),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Center(
+                    child: Text(
+                      'PingMe',
+                      style: GoogleFonts.openSans(
+                          wordSpacing: 0,
+                          color: Colors.teal[400],
+                          fontSize: 50,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w800),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
                   ),
                   TextFormField(
                     style: TextStyle(color: Colors.white),
