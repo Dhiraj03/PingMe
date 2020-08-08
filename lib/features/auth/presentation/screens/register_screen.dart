@@ -17,7 +17,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   RegisterBloc _registerBloc;
-
+  UserRepository userRepository;
   @override
   void initState() {
     super.initState();
@@ -29,11 +29,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Register')),
+      backgroundColor: Color.fromRGBO(255, 255, 255, 0.09),
       body: Center(
         child: BlocProvider(
           create: (_) => _registerBloc,
-          child: RegisterForm(),
+          child: RegisterForm(
+            userRepository: userRepository,
+          ),
         ),
       ),
     );

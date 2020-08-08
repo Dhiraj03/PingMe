@@ -33,6 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(255, 255, 255, 0.09),
       body: BlocProvider<LoginBloc>(
         create: (_) => _loginBloc,
         child: 

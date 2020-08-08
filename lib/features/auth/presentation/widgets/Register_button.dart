@@ -10,7 +10,7 @@ final VoidCallback _onPressed;
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
-      color: Colors.purple,
+      color: Colors.teal[400],
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30.0),
       ),

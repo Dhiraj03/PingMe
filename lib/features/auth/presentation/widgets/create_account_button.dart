@@ -16,11 +16,11 @@ class CreateAccountButton extends StatelessWidget {
       child: Text(
         'Create an Account',
         style: TextStyle(
-          color: Colors.purple
+          color: Colors.teal[400]
         ),
       ),
       onPressed: () {
-        Navigator.of(context).push<dynamic>(
+        Navigator.of(context).push(
           MaterialPageRoute<dynamic>(builder: (context) {
             return RegisterScreen(userRepository: _userRepository);
           }),

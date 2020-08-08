@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:fluttericon/typicons_icons.dart';
+import 'package:ping_me/features/auth/data/user_repository.dart';
 import 'package:ping_me/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:ping_me/features/auth/presentation/bloc/auth_bloc/auth_events.dart';
 import 'package:ping_me/features/auth/presentation/bloc/register_bloc/register_bloc.dart';
@@ -9,6 +10,9 @@ import 'package:ping_me/features/auth/presentation/widgets/Register_button.dart'
 
 //read login_form.dart for documentation
 class RegisterForm extends StatefulWidget {
+  Key key;
+  UserRepository userRepository;
+  RegisterForm({this.key, @required userRepository}) : userRepository = userRepository ?? UserRepository();
   State<RegisterForm> createState() => _RegisterFormState();
 }
 
@@ -17,7 +21,7 @@ class _RegisterFormState extends State<RegisterForm> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   RegisterBloc _registerBloc;
-
+  UserRepository get userRepository => widget.userRepository;
   bool get isPopulated =>
       _emailController.text.isNotEmpty &&
       _passwordController.text.isNotEmpty &&
@@ -75,7 +79,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     Icon(Icons.error),
                   ],
                 ),
-                backgroundColor: Colors.red,
+                backgroundColor: Color(0xFFCCF6679),
               ),
             );
         }
@@ -94,21 +98,35 @@ class _RegisterFormState extends State<RegisterForm> {
                   Icon(
                     Typicons.chat_alt,
                     size: 70,
-                    color: Colors.purple,
+                    color: Colors.teal[400],
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 20),
                     child: Container(height: 100),
                   ),
                   TextFormField(
+                    style: TextStyle(color: Colors.white),
                     controller: _emailController,
                     decoration: InputDecoration(
-                      icon: Icon(
-                        Icons.email,
-                        color: Colors.purple,
-                      ),
-                      labelText: 'Email',
-                    ),
+                        icon: Icon(
+                          Icons.email,
+                          color: Colors.teal[400],
+                        ),
+                        focusedErrorBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Color(0xFFCCF6679),
+                        )),focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Color(0xFFBB86FC),
+                        )),
+                        errorBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Color(0xFFCCF6679),
+                        )),
+                        errorStyle: TextStyle(color: Color(0xFFCCF6679)),
+                        labelText: 'Email',
+                        labelStyle: TextStyle(
+                            color: Color.fromRGBO(255, 255, 255, 0.30))),
                     autocorrect: false,
                     autovalidate: true,
                     validator: (_) {
@@ -116,14 +134,28 @@ class _RegisterFormState extends State<RegisterForm> {
                     },
                   ),
                   TextFormField(
+                    style: TextStyle(color: Colors.white),
                     controller: _passwordController,
                     decoration: InputDecoration(
-                      icon: Icon(
-                        Icons.lock,
-                        color: Colors.purple,
-                      ),
-                      labelText: 'Password',
-                    ),
+                        icon: Icon(
+                          Icons.lock,
+                          color: Colors.teal[400],
+                        ),focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Color(0xFFBB86FC),
+                        )),
+                        focusedErrorBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Color(0xFFCCF6679),
+                        )),
+                        errorBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Color(0xFFCCF6679),
+                        )),
+                        errorStyle: TextStyle(color: Color(0xFFCCF6679)),
+                        labelText: 'Password',
+                        labelStyle: TextStyle(
+                            color: Color.fromRGBO(255, 255, 255, 0.30))),
                     obscureText: true,
                     autocorrect: false,
                     autovalidate: true,
@@ -133,13 +165,28 @@ class _RegisterFormState extends State<RegisterForm> {
                   ),
                   TextFormField(
                     controller: _usernameController,
+                    style: TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                      icon: Icon(
-                        FontAwesome.user,
-                        color: Colors.purple,
-                      ),
-                      labelText: 'Username',
-                    ),
+                        icon: Icon(
+                          FontAwesome.user,
+                          color: Colors.teal[400],
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Color(0xFFBB86FC),
+                        )),
+                        focusedErrorBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Color(0xFFCCF6679),
+                        )),
+                        errorBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Color(0xFFCCF6679),
+                        )),
+                        errorStyle: TextStyle(color: Color(0xFFCCF6679)),
+                        labelText: 'Username',
+                        labelStyle: TextStyle(
+                            color: Color.fromRGBO(255, 255, 255, 0.30))),
                     autocorrect: false,
                     autovalidate: true,
                     validator: (_) {
@@ -154,6 +201,7 @@ class _RegisterFormState extends State<RegisterForm> {
                         ? _onFormSubmitted
                         : null,
                   ),
+                 
                 ],
               ),
             ),
@@ -190,10 +238,9 @@ class _RegisterFormState extends State<RegisterForm> {
   void _onFormSubmitted() {
     _registerBloc.add(
       Submitted(
-        email: _emailController.text,
-        password: _passwordController.text,
-        username: _usernameController.text
-      ),
+          email: _emailController.text,
+          password: _passwordController.text,
+          username: _usernameController.text),
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:fluttericon/typicons_icons.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ping_me/features/auth/data/user_repository.dart';
 import 'package:ping_me/features/auth/presentation/bloc/auth_bloc/auth_barrel_bloc.dart';
 import 'package:ping_me/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
@@ -36,7 +37,7 @@ class _LoginFormState extends State<LoginForm> {
   //Just checks if password and email are empty
   bool get isPopulated =>
       _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
-  
+
   //Checks if password and email are valid, and the state is not under submission
   bool isLoginButtonEnabled(LoginState state) {
     return state.isFormValid && !state.isSubmitting && isPopulated;
@@ -66,7 +67,7 @@ class _LoginFormState extends State<LoginForm> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [const Text('Login Failure'), Icon(Icons.error)],
                 ),
-                backgroundColor: Colors.red,
+                backgroundColor: Color(0xFFCCF6679),
               ),
             );
 
@@ -95,7 +96,7 @@ class _LoginFormState extends State<LoginForm> {
               padding: EdgeInsets.all(20),
               child: Form(
                   child: ListView(
-                    shrinkWrap: true,
+                shrinkWrap: true,
                 children: <Widget>[
                   SizedBox(
                     height: 20,
@@ -103,26 +104,77 @@ class _LoginFormState extends State<LoginForm> {
                   Icon(
                     Typicons.chat_alt,
                     size: 70,
-                    color: Colors.purple,
+                    color: Colors.teal[400],
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20),
-                    child: Container(height: 100),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Center(
+                    child: Text(
+                      'PingMe',
+                      style: GoogleFonts.openSans(
+                          wordSpacing: 0,
+                          color: Colors.teal[400],
+                          fontSize: 50,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w800),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
                   ),
                   TextFormField(
+                    style: TextStyle(color: Colors.white),
                     controller: _emailController,
                     decoration: InputDecoration(
-                        icon: Icon(Icons.email, color: Colors.purple,), labelText: 'Email'),
+                        focusedErrorBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Color(0xFFCCF6679),
+                        )),
+                        errorBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Color(0xFFCCF6679),
+                        )),focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Color(0xFFBB86FC),
+                        )),
+                        errorStyle: TextStyle(color: Color(0xFFCCF6679)),
+                        icon: Icon(
+                          Icons.email,
+                          color: Colors.teal[400],
+                        ),
+                        labelText: 'Email',
+                        labelStyle: TextStyle(
+                            color: Color.fromRGBO(255, 255, 255, 0.30))),
                     autovalidate: true,
                     autocorrect: false,
                     validator: (_) {
-                      return !state.isEmailValid  ? 'Invalid Email' : null;
+                      return !state.isEmailValid ? 'Invalid Email' : null;
                     },
                   ),
                   TextFormField(
+                    style: TextStyle(color: Colors.white),
                     controller: _passwordController,
                     decoration: InputDecoration(
-                        icon: Icon(Icons.lock, color: Colors.purple,), labelText: 'Password'),
+                        focusedErrorBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Color(0xFFCCF6679),
+                        )),focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Color(0xFFBB86FC),
+                        )),
+                        errorBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Color(0xFFCCF6679),
+                        )),
+                        errorStyle: TextStyle(color: Color(0xFFCCF6679)),
+                        icon: Icon(
+                          Icons.lock,
+                          color: Colors.teal[400],
+                        ),
+                        labelText: 'Password',
+                        labelStyle: TextStyle(
+                            color: Color.fromRGBO(255, 255, 255, 0.30))),
                     obscureText: true,
                     autovalidate: true,
                     autocorrect: false,
@@ -139,6 +191,9 @@ class _LoginFormState extends State<LoginForm> {
                               onPressed: isLoginButtonEnabled(state)
                                   ? _onFormSubmitted
                                   : null,
+                            ),
+                            SizedBox(
+                              height: 10,
                             ),
                             GoogleLoginButton(),
                             CreateAccountButton(
@@ -158,7 +213,6 @@ class _LoginFormState extends State<LoginForm> {
     super.dispose();
   }
 
-
   /* The three functions responsible for dispatching the three different types of events - 
     EmailChanged, PasswordChanged and LoginWithCredentialsPassed
    */
@@ -174,12 +228,8 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  void _onFormSubmitted()
-  {
-    _loginBloc.add(
-      LoginWithCredentialsPressed(
-        email: _emailController.text, 
-        password: _passwordController.text)
-    );
+  void _onFormSubmitted() {
+    _loginBloc.add(LoginWithCredentialsPressed(
+        email: _emailController.text, password: _passwordController.text));
   }
 }
