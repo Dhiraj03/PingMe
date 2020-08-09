@@ -24,19 +24,44 @@ class _ClassicDashboardScreenState extends State<ClassicDashboardScreen> {
   Stream<QuerySnapshot> get recentChats => widget.recentChats;
   QuerySnapshot get initialData => widget.initialData;
   String get self => widget.self;
-  Widget buildRecentChatTile(String username, String lastText) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: Colors.teal[400],
-        child: Text(username[0].toUpperCase(),
-            style: TextStyle(color: Colors.white)),
-      ),
-      title: Text(
-        username,
-        style: TextStyle(color: Colors.white),
-      ),
-      subtitle: Text(lastText, style: TextStyle(color: Colors.white)),
-    );
+  Widget buildRecentChatTile(String link, String username, String lastText) {
+    return (link == null)
+        ? ListTile(
+            leading: Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                color: Colors.teal[400],
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  username[0].toUpperCase(),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
+            title: Text(
+              username,
+              style: TextStyle(color: Colors.white),
+            ),
+            subtitle: Text(lastText, style: TextStyle(color: Colors.white)),
+          )
+        : ListTile(
+            leading: Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                      fit: BoxFit.cover, image: NetworkImage(link))),
+            ),
+            title: Text(
+              username,
+              style: TextStyle(color: Colors.white),
+            ),
+            subtitle: Text(lastText, style: TextStyle(color: Colors.white)),
+          );
   }
 
   Future<bool> willPopCallBack() async {
@@ -140,6 +165,7 @@ class _ClassicDashboardScreenState extends State<ClassicDashboardScreen> {
                                                     uid2: user.data.uid));
                                           },
                                           child: buildRecentChatTile(
+                                              user.data.photoUrl,
                                               user.data.username,
                                               snapshot.data.documents[index]
                                                   ['last_message']),
