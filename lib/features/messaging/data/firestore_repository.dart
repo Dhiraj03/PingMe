@@ -10,7 +10,8 @@ class FirestoreRepository {
     print('creating a user');
     final users = firestoreInstance.collection('users');
     final uid = await userRepository.getUser();
-    users.add({'uid': uid, 'email': email, 'username': username, 'photoUrl' : null});
+    users.add(
+        {'uid': uid, 'email': email, 'username': username, 'photoUrl': null});
   }
 
   Future<bool> validUsername(String username) async {
@@ -46,8 +47,8 @@ class FirestoreRepository {
       'uid1': uid1,
       'uid2': uid2,
       'participants': [uid1, uid2],
-      'username1' : user1.username,
-      'username2' : user2.username
+      'username1': user1.username,
+      'username2': user2.username
     });
     return res.collection('chat_history');
   }
@@ -69,7 +70,10 @@ class FirestoreRepository {
     final ref = await users.where('uid', isEqualTo: uid).getDocuments();
     final doc = ref.documents[0];
     return User(
-        username: doc['username'], email: doc['email'], uid: doc['uid'], photoUrl: doc['photoUrl']);
+        username: doc['username'],
+        email: doc['email'],
+        uid: doc['uid'],
+        photoUrl: doc['photoUrl']);
   }
 
   Stream<QuerySnapshot> fetchMessages(CollectionReference chatroomRef) {
@@ -141,5 +145,17 @@ class FirestoreRepository {
         }, merge: true);
       }
     }
+  }
+
+  Future<void> changeProfilePicture(String link, String uid) async {
+    final QuerySnapshot docs = await firestoreInstance
+        .collection('users')
+        .where('uid', isEqualTo: uid)
+        .getDocuments();
+    final String userDoc = docs.documents[0].documentID;
+    firestoreInstance
+        .collection('users')
+        .document(userDoc)
+        .updateData({'photoUrl':link});
   }
 }
