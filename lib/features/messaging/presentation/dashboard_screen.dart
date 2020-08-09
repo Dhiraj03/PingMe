@@ -57,7 +57,12 @@ class _DashboardScreenState extends State<DashboardScreen>
                 child: BlocBuilder<DashboardBloc, DashboardState>(
                     builder: (BuildContext context, DashboardState state) {
                   if (state is DashboardInitial)
-                    return Center(child: CircularProgressIndicator());
+                    return Scaffold(
+                      backgroundColor: Color.fromRGBO(12, 12, 12, 1),
+                      body: Center(child: CircularProgressIndicator(
+                        valueColor: new AlwaysStoppedAnimation<Color>(Colors.teal[400]),
+                      )),
+                    );
                   else if (state is ClassicDashboard)
                     return ClassicDashboardScreen(
                         self: state.self,

@@ -104,6 +104,9 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
           ),
           Expanded(
             child: TextField(
+              style: TextStyle(
+                color: Colors.white
+              ),
               textCapitalization: TextCapitalization.sentences,
               controller: messageController,
               decoration: InputDecoration.collapsed(
@@ -173,7 +176,20 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
         backgroundColor: Color.fromRGBO(12, 12, 12, 1),
         appBar: AppBar(
           elevation: 0,
-          title: Text(user.username),
+          title: Row(children : <Widget>[
+            Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                      fit: BoxFit.cover, image: NetworkImage(user.photoUrl))),
+            ),
+            SizedBox(
+              width : 10
+            ),
+            Text(user.username)
+          ] ),
           backgroundColor: Color.fromRGBO(255, 255, 255, 0.09),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -238,13 +254,11 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                                     itemBuilder:
                                         (BuildContext context, int index) {
                                       final bool isMe =
-                                          !(chatList[index].sender == user.uid);
-                                      if (index == 0)
+                                          (chatList[index].sender == user.uid);
+                                      
                                         return _buildMessage(
                                             chatList[index], isMe);
-                                      else
-                                        return _buildMessage(
-                                            chatList[index], !isMe);
+                                     
                                     },
                                   );
                                 });

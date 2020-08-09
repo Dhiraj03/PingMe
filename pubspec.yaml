@@ -37,6 +37,8 @@ dependencies:
   cloud_firestore: ^0.13.7
   bubble: ^1.1.9+1
   image_picker: ^0.6.7+4
+  firebase_messaging: ^6.0.13
+  flutter_local_notifications: ^1.4.4+2
 dev_dependencies:
   flutter_test:
     sdk: flutter
