@@ -1,15 +1,86 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:ping_me/features/auth/data/user_repository.dart';
-import 'package:ping_me/features/messaging/data/message_model.dart';
+import 'package:ping_me/features/messaging/data/message_model.dart' as msg;
 import 'package:ping_me/features/messaging/data/user_model.dart';
 
 class FirestoreRepository {
+  // final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+  // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  //     FlutterLocalNotificationsPlugin();
+
+  // void configLocalNotification() {
+  //   var initializationSettingsAndroid =
+  //       AndroidInitializationSettings('app_icon');
+  //   var initializationSettingsIOS = IOSInitializationSettings();
+  //   var initializationSettings = InitializationSettings(
+  //       initializationSettingsAndroid, initializationSettingsIOS);
+  //   flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  // }
+
+  // void showNotification(message) async {
+  //   var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+  //     'com.dhiraj.pingme',
+  //     'PingMe',
+  //     'A simple chat application',
+  //     playSound: true,
+  //     enableVibration: true,
+  //     importance: Importance.Max,
+  //     priority: Priority.High,
+  //   );
+  //   var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+  //   var platformChannelSpecifics = new NotificationDetails(
+  //       androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+  //   print(message);
+  //   await flutterLocalNotificationsPlugin.show(0, message['title'].toString(),
+  //       message['body'].toString(), platformChannelSpecifics,
+  //       payload: json.encode(message));
+  // }
+
+  // void registerNotification(String uid) {
+  //   firebaseMessaging.requestNotificationPermissions();
+
+  //   firebaseMessaging.configure(onMessage: (Map<String, dynamic> message) {
+  //     print('onMessage: $message');
+  //     Platform.isAndroid
+  //         ? showNotification(message['notification'])
+  //         : showNotification(message['aps']['alert']);
+  //     return;
+  //   }, onResume: (Map<String, dynamic> message) {
+  //     print('onResume: $message');
+  //     return;
+  //   }, onLaunch: (Map<String, dynamic> message) {
+  //     print('onLaunch: $message');
+  //     return;
+  //   });
+
+  //   firebaseMessaging.getToken().then((token) async {
+  //     final docs = await firestoreInstance
+  //         .collection('users')
+  //         .where('uid')
+  //         .getDocuments();
+  //     final docId = docs.documents[0].documentID;
+  //     await firestoreInstance
+  //         .collection('users')
+  //         .document(docId)
+  //         .updateData({'pushToken': token});
+  //   }).catchError((e) {
+  //     print(e.toString());
+  //   });
+  // }
+
   final UserRepository userRepository = UserRepository();
   static final firestoreInstance = Firestore.instance;
+
   void createUser(String email, String username) async {
     print('creating a user');
     final users = firestoreInstance.collection('users');
     final uid = await userRepository.getUser();
+    // registerNotification(uid);
     users.add(
         {'uid': uid, 'email': email, 'username': username, 'photoUrl': null});
   }
@@ -66,9 +137,12 @@ class FirestoreRepository {
   }
 
   Future<User> fetchUser(String uid) async {
+    print(uid);
     final users = firestoreInstance.collection('users');
     final ref = await users.where('uid', isEqualTo: uid).getDocuments();
+    print('ffs');
     final doc = ref.documents[0];
+    print('doc' + doc['username']);
     return User(
         username: doc['username'],
         email: doc['email'],
@@ -100,14 +174,14 @@ class FirestoreRepository {
   }
 
   Future<void> sendMessage(
-      CollectionReference chatroomref, Message message) async {
+      CollectionReference chatroomref, msg.Message message) async {
     chatroomref.add({
       'message': message.message,
       'sender': message.sender,
       'receiver': message.receiver,
       'timestamp': DateTime.now(),
       'type': message.type,
-      'photourl': message.photoUrl,
+      'photoUrl': message.photoUrl,
     });
     QuerySnapshot chat1 = await firestoreInstance
         .collection('chats')
@@ -147,6 +221,26 @@ class FirestoreRepository {
     }
   }
 
+  // void registerNotifications() {
+  //   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+  //   firebaseMessaging.requestNotificationPermissions();
+  //   firebaseMessaging.configure(onMessage: (Map<String, dynamic> message) {
+  //     print('onMessage: $message');
+  //     Platform.isAndroid
+  //         ? showNotification(message['notification'])
+  //         : showNotification(message['aps']['alert']);
+  //     return;
+  //   },onResume: (Map<String, dynamic> message) {
+  //     print('onResume: $message');
+  //     return;
+  //   }, onLaunch: (Map<String, dynamic> message) {
+  //     print('onLaunch: $message');
+  //     return;
+  //   }
+  //   );
+
+  // }
+
   Future<void> changeProfilePicture(String link, String uid) async {
     final QuerySnapshot docs = await firestoreInstance
         .collection('users')
@@ -156,6 +250,6 @@ class FirestoreRepository {
     firestoreInstance
         .collection('users')
         .document(userDoc)
-        .updateData({'photoUrl':link});
+        .updateData({'photoUrl': link});
   }
 }

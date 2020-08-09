@@ -23,11 +23,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return File(tempImage.path);
   }
 
-  Future<String> uploadImage(File pickedImage) async {
-    var randomNumber = Random(25);
+  Future<String> uploadImage(File pickedImage, String userID) async {
     final StorageReference firebaseStorageRef = FirebaseStorage.instance
         .ref()
-        .child('profilepics/${randomNumber.nextInt(5000).toString()}.jpg');
+        .child('profilepics/${userID}.jpg');
     StorageTaskSnapshot snapshot =
         await firebaseStorageRef.putFile(pickedImage).onComplete;
     String link;
@@ -127,7 +126,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 onPressed: () async {
                                   final pickedImage = await getImage();
-                                  final link = await uploadImage(pickedImage);
+                                  final link = await uploadImage(pickedImage, state.user.uid);
                                   BlocProvider.of<ProfileBloc>(context)
                                     ..add(ChangeProfilePicture(
                                         user: state.user, link: link));
@@ -182,7 +181,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 onPressed: () async {
                                   final pickedImage = await getImage();
-                                  final link = await uploadImage(pickedImage);
+                                  final link = await uploadImage(pickedImage, state.user.uid);
                                   BlocProvider.of<ProfileBloc>(context)
                                     ..add(ChangeProfilePicture(
                                         user: state.user, link: link));

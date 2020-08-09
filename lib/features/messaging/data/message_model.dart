@@ -20,6 +20,7 @@ class Message {
   factory Message.fromJson(Map<String, dynamic> message)
   {
     final Message messageres = Message(
+      photoUrl: message['photoUrl'],
     message: message
         ['message'],
     sender: message

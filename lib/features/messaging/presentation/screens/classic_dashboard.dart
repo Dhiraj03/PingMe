@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,7 +46,8 @@ class _ClassicDashboardScreenState extends State<ClassicDashboardScreen> {
               username,
               style: TextStyle(color: Colors.white),
             ),
-            subtitle: Text(lastText, style: TextStyle(color: Colors.white)),
+            subtitle:
+                Text(lastText ?? '', style: TextStyle(color: Colors.white)),
           )
         : ListTile(
             leading: Container(
@@ -60,7 +62,8 @@ class _ClassicDashboardScreenState extends State<ClassicDashboardScreen> {
               username,
               style: TextStyle(color: Colors.white),
             ),
-            subtitle: Text(lastText, style: TextStyle(color: Colors.white)),
+            subtitle:
+                Text(lastText ?? '', style: TextStyle(color: Colors.white)),
           );
   }
 
@@ -127,51 +130,61 @@ class _ClassicDashboardScreenState extends State<ClassicDashboardScreen> {
                 child: Column(
                   children: <Widget>[
                     StreamBuilder(
-                        initialData: initialData,
                         stream: recentChats,
                         builder:
                             (BuildContext context, AsyncSnapshot snapshot) {
-                          return ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: snapshot.data.documents.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                String otherUser;
-                                if (snapshot.data.documents[index]['uid1'] ==
-                                    self)
-                                  otherUser =
-                                      snapshot.data.documents[index]['uid2'];
-                                else
-                                  otherUser =
-                                      snapshot.data.documents[index]['uid1'];
-                                return FutureBuilder(
-                                    future: firestoreRepository
-                                        .fetchUser(otherUser),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot user) {
-                                      if (user.connectionState ==
-                                              ConnectionState.none ||
-                                          user.connectionState ==
-                                              ConnectionState.waiting ||
-                                          user.hasError)
-                                        return Container(
-                                          color: Color.fromRGBO(12, 12, 12, 1),
-                                        );
-                                      else
-                                        return GestureDetector(
-                                          onTap: () {
-                                            BlocProvider.of<DashboardBloc>(
-                                                    context)
-                                                .add(OpenDM(
-                                                    uid2: user.data.uid));
-                                          },
-                                          child: buildRecentChatTile(
-                                              user.data.photoUrl,
-                                              user.data.username,
-                                              snapshot.data.documents[index]
-                                                  ['last_message']),
-                                        );
-                                    });
-                              });
+                          if (snapshot.connectionState ==
+                                  ConnectionState.none ||
+                              snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else {
+                            return ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: snapshot.data.documents.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  print(snapshot.data.documents.length);
+                                  String otherUser;
+                                  if (snapshot.data.documents[index]['uid1'] ==
+                                      self)
+                                    otherUser =
+                                        snapshot.data.documents[index]['uid2'];
+                                  else
+                                    otherUser =
+                                        snapshot.data.documents[index]['uid1'];
+                                  return FutureBuilder(
+                                      future: firestoreRepository
+                                          .fetchUser(otherUser),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot user) {
+                                        if (user.connectionState ==
+                                                ConnectionState.none ||
+                                            user.connectionState ==
+                                                ConnectionState.waiting ||
+                                            user.hasError)
+                                          return Container(
+                                            color:
+                                                Color.fromRGBO(12, 12, 12, 1),
+                                          );
+                                        else
+                                          return GestureDetector(
+                                            onTap: () {
+                                              BlocProvider.of<DashboardBloc>(
+                                                      context)
+                                                  .add(OpenDM(
+                                                      uid2: user.data.uid));
+                                            },
+                                            child: buildRecentChatTile(
+                                                user.data.photoUrl,
+                                                user.data.username,
+                                                snapshot.data.documents[index]
+                                                    ['last_message']),
+                                          );
+                                      });
+                                });
+                          }
                         })
                   ],
                 ),

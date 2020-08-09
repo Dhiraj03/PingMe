@@ -28,8 +28,8 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       yield ClassicDashboard(initialData: initialData, recentChats: stream, self : uid);
     } else if (event is GotoDashboard) {
       String uid = await userRepository.getUser();
-      final initialData = await firestoreRepository.getInitialChats(event.uid);
-      final stream = firestoreRepository.fetchRecentChats(event.uid);
+      final initialData = await firestoreRepository.getInitialChats(uid);
+      final stream = firestoreRepository.fetchRecentChats(uid);
       yield ClassicDashboard(initialData: initialData, recentChats: stream, self: uid);
     } else if (event is OpenDM) {
       final uid1 = await userRepository.getUser();
